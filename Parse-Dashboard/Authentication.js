@@ -35,9 +35,9 @@ function initialize(app, options) {
     cb(null, match.matchingUsername);
   }, function (user, done) {
 
-    let secret = this.validUsers.find(u => {
+    let secret = self.validUsers.find(u => {
       return user == u.user;
-    })[0].secret;
+    }).secret;
 
     if (!secret) {
         done(new Error("Google Authenticator is not setup yet."));
