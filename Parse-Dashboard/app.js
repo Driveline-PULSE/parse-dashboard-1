@@ -61,7 +61,7 @@ module.exports = function(config, options) {
   app.on('mount', function() {
     const mountPath = getMount(app.mountpath);
     const users = config.users;
-    const use2Fa = config.use2FA ? true : false;
+    const use2FA = config.use2FA ? true : false;
     const useEncryptedPasswords = config.useEncryptedPasswords ? true : false;
     const authInstance = new Authentication(users, useEncryptedPasswords, use2FA, mountPath);
     authInstance.initialize(app, { cookieSessionSecret: options.cookieSessionSecret });
