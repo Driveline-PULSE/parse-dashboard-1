@@ -3,7 +3,7 @@ var bcrypt = require('bcryptjs');
 var csrf = require('csurf');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
+var GoogleAuthenticator = require('passport-2fa-totp').GoogleAuthenticator;
 var TwoFAStartegy = require('passport-2fa-totp').Strategy;
 
 /**
@@ -34,16 +34,19 @@ function initialize(app, options) {
     }
     cb(null, match.matchingUsername);
   }, function (user, done) {
-      // 2nd step verification: TOTP code from Google Authenticator
 
-    if (!user.secret) {
+    let secret = this.validUsers.find(u => {
+      return user == u.user;
+    })[0].secret;
+
+    if (!secret) {
         done(new Error("Google Authenticator is not setup yet."));
     } else {
         // Google Authenticator uses 30 seconds key period
         // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
 
-        var secret = GoogleAuthenticator.decodeSecret(user.secret);
-        done(null, secret, 30);
+        var decodedSecret = GoogleAuthenticator.decodeSecret(secret);
+        done(null, decodedSecret, 30);
     }
   }));
 
