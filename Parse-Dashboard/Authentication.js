@@ -3,6 +3,8 @@ var bcrypt = require('bcryptjs');
 var csrf = require('csurf');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
+var TwoFAStartegy = require('passport-2fa-totp').Strategy;
 
 /**
  * Constructor for Authentication class
@@ -20,18 +22,30 @@ function Authentication(validUsers, useEncryptedPasswords, mountPath) {
 function initialize(app, options) {
   options = options || {};
   var self = this;
-  passport.use('local', new LocalStrategy(
-    function(username, password, cb) {
-      var match = self.authenticate({
-        name: username,
-        pass: password
-      });
-      if (!match.matchingUsername) {
-        return cb(null, false, { message: 'Invalid username or password' });
-      }
-      cb(null, match.matchingUsername);
-    })
-  );
+
+
+  passport.use(new TwoFAStartegy(function(username, password, cb) {
+    var match = self.authenticate({
+      name: username,
+      pass: password
+    });
+    if (!match.matchingUsername) {
+      return cb(null, false, { message: 'Invalid username or password' });
+    }
+    cb(null, match.matchingUsername);
+  }, function (user, done) {
+      // 2nd step verification: TOTP code from Google Authenticator
+
+    if (!user.secret) {
+        done(new Error("Google Authenticator is not setup yet."));
+    } else {
+        // Google Authenticator uses 30 seconds key period
+        // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+
+        var secret = GoogleAuthenticator.decodeSecret(user.secret);
+        done(null, secret, 30);
+    }
+  }));
 
   passport.serializeUser(function(username, cb) {
     cb(null, username);
@@ -59,7 +73,7 @@ function initialize(app, options) {
 
   app.post('/login',
     csrf(),
-    passport.authenticate('local', {
+    passport.authenticate('2fa-totp', {
       successRedirect: `${self.mountPath}apps`,
       failureRedirect: `${self.mountPath}login`,
       failureFlash : true
