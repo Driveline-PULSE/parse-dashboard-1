@@ -21,7 +21,7 @@ export default class Login extends React.Component {
     }
 
     let use2FADiv = document.getElementById('use2FA');
-    this.use2FA = use2FADiv !== undefined;
+    this.use2FA = use2FADiv !== null;
 
     this.state = {
       forgot: false

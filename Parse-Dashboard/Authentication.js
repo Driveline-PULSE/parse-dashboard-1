@@ -17,13 +17,14 @@ function Authentication(validUsers, useEncryptedPasswords, use2FA, mountPath) {
   this.validUsers = validUsers;
   this.useEncryptedPasswords = useEncryptedPasswords || false;
   this.mountPath = mountPath;
+  this.use2FA = use2FA;
 }
 
 function initialize(app, options) {
   options = options || {};
   var self = this;
 
-  if (use2FA) {
+  if (self.use2FA) {
     passport.use(new TwoFAStartegy(function(username, password, cb) {
       var match = self.authenticate({
         name: username,
@@ -91,7 +92,7 @@ function initialize(app, options) {
 
   app.post('/login',
     csrf(),
-    passport.authenticate('2fa-totp', {
+    passport.authenticate(self.use2FA ? '2fa-totp' : 'local', {
       successRedirect: `${self.mountPath}apps`,
       failureRedirect: `${self.mountPath}login`,
       failureFlash : true
