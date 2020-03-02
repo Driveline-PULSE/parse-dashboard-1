@@ -41,6 +41,9 @@ export default class Login extends React.Component {
         <LoginRow
           label='Password'
           input={<input name='password' type='password' />} />
+        <LoginRow
+          label='F2A'
+          input={<input name='code' type='text' />} />
         {this.errors ?
           <div className={styles.error}>
             {this.errors}
