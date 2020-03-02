@@ -14,4 +14,4 @@ require('stylesheets/fonts.scss');
 // App entry point
 
 var path = window.PARSE_DASHBOARD_PATH || '/';
-ReactDOM.render(<Login path={path}/>, document.getElementById('login_mount'));
+ReactDOM.render(<Login path={path} use2FA="true"/>, document.getElementById('login_mount'));

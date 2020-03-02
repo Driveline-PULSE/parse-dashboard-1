@@ -20,6 +20,9 @@ export default class Login extends React.Component {
       this.errors = errorDiv.innerHTML;
     }
 
+    let use2FADiv = document.getElementById('use2FA');
+    this.use2FA = use2FADiv !== undefined;
+
     this.state = {
       forgot: false
     };
@@ -27,7 +30,7 @@ export default class Login extends React.Component {
   }
 
   render() {
-    const {path} = this.props;
+    const {path, use2FA} = this.props;
 
     return (
       <LoginForm
@@ -41,9 +44,10 @@ export default class Login extends React.Component {
         <LoginRow
           label='Password'
           input={<input name='password' type='password' />} />
+        {this.use2FA ?
         <LoginRow
           label='F2A'
-          input={<input name='code' type='text' />} />
+          input={<input name='code' type='text' />} /> : null}
         {this.errors ?
           <div className={styles.error}>
             {this.errors}

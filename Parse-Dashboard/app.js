@@ -61,8 +61,9 @@ module.exports = function(config, options) {
   app.on('mount', function() {
     const mountPath = getMount(app.mountpath);
     const users = config.users;
+    const use2Fa = config.use2FA ? true : false;
     const useEncryptedPasswords = config.useEncryptedPasswords ? true : false;
-    const authInstance = new Authentication(users, useEncryptedPasswords, mountPath);
+    const authInstance = new Authentication(users, useEncryptedPasswords, use2FA, mountPath);
     authInstance.initialize(app, { cookieSessionSecret: options.cookieSessionSecret });
 
     // CSRF error handler
@@ -173,6 +174,8 @@ module.exports = function(config, options) {
       }
 
       let errors = req.flash('error');
+      let use2FA = use2FA ? `<div id="use2FA" style="display: none;">` : ""; 
+
       if (errors && errors.length) {
         errors = `<div id="login_errors" style="display: none;">
           ${errors.join(' ')}
@@ -191,6 +194,7 @@ module.exports = function(config, options) {
           <body>
             <div id="login_mount"></div>
             ${errors}
+            ${use2FA}
             <script id="csrf" type="application/json">"${req.csrfToken()}"</script>
             <script src="${mountPath}bundles/login.bundle.js"></script>
           </body>

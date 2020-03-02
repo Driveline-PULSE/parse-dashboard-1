@@ -13,7 +13,7 @@ var TwoFAStartegy = require('passport-2fa-totp').Strategy;
  * @param {Object[]} validUsers
  * @param {boolean} useEncryptedPasswords
  */
-function Authentication(validUsers, useEncryptedPasswords, mountPath) {
+function Authentication(validUsers, useEncryptedPasswords, use2FA, mountPath) {
   this.validUsers = validUsers;
   this.useEncryptedPasswords = useEncryptedPasswords || false;
   this.mountPath = mountPath;
@@ -23,33 +23,48 @@ function initialize(app, options) {
   options = options || {};
   var self = this;
 
+  if (use2FA) {
+    passport.use(new TwoFAStartegy(function(username, password, cb) {
+      var match = self.authenticate({
+        name: username,
+        pass: password
+      });
+      if (!match.matchingUsername) {
+        return cb(null, false, { message: 'Invalid username or password' });
+      }
+      cb(null, match.matchingUsername);
+    }, function (user, done) {
 
-  passport.use(new TwoFAStartegy(function(username, password, cb) {
-    var match = self.authenticate({
-      name: username,
-      pass: password
-    });
-    if (!match.matchingUsername) {
-      return cb(null, false, { message: 'Invalid username or password' });
-    }
-    cb(null, match.matchingUsername);
-  }, function (user, done) {
+      let secret = self.validUsers.find(u => {
+        return user == u.user;
+      }).secret;
 
-    let secret = self.validUsers.find(u => {
-      return user == u.user;
-    }).secret;
+      if (!secret) {
+          done(new Error("Google Authenticator is not setup yet."));
+      } else {
+          // Google Authenticator uses 30 seconds key period
+          // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
 
-    if (!secret) {
-        done(new Error("Google Authenticator is not setup yet."));
-    } else {
-        // Google Authenticator uses 30 seconds key period
-        // https://github.com/google/google-authenticator/wiki/Key-Uri-Format
-
-        var decodedSecret = GoogleAuthenticator.decodeSecret(secret);
-        done(null, decodedSecret, 30);
-    }
-  }));
-
+          var decodedSecret = GoogleAuthenticator.decodeSecret(secret);
+          done(null, decodedSecret, 30);
+      }
+    }));
+  }
+  else {
+    passport.use('local', new LocalStrategy(
+      function(username, password, cb) {
+        var match = self.authenticate({
+          name: username,
+          pass: password
+        });
+        if (!match.matchingUsername) {
+          return cb(null, false, { message: 'Invalid username or password' });
+        }
+        cb(null, match.matchingUsername);
+      })
+    );
+  }
+  
   passport.serializeUser(function(username, cb) {
     cb(null, username);
   });
