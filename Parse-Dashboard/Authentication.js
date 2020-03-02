@@ -3,7 +3,7 @@ var bcrypt = require('bcryptjs');
 var csrf = require('csurf');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var GoogleAuthenticator = require('passport-2fa-totp').GoogleAuthenticator;
+var GoogleAuthenticator = require('passport-2fa-totp').GoogeAuthenticator;
 var TwoFAStartegy = require('passport-2fa-totp').Strategy;
 
 /**
