@@ -96,7 +96,7 @@
     "marked": "0.8.2",
     "node-sass": "^4.13.1",
     "null-loader": "^3.0.0",
-    "parse-server": "git+https://github.com/ProximalPod/parse-server.git#e26f66b80c96846f3d49f6a74482e3ae694207ee",
+    "parse-server": "git+https://github.com/ProximalPod/parse-server.git#4.10.3-motus-fix",
     "path-to-regexp": "3.2.0",
     "puppeteer": "3.0.0",
     "react-test-renderer": "16.13.1",
