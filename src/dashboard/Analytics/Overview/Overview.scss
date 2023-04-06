@@ -10,7 +10,7 @@
 $overviewBackground: #fbfbfc;
 $containerWidth: 720px;
 $containerPadding: 20px;
-$infoWidth: ($containerWidth - 2 * $containerPadding) / 4;
+$infoWidth: calc(($containerWidth - 2 * $containerPadding) / 4);
 
 .content {
   padding: 96px 0px 48px 0px;

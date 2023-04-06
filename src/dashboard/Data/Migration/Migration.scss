@@ -100,14 +100,14 @@ $progressRowPadding: 15px;
 
 .detailBackground {
 	background-color: $progressBarGrey;
-	border-radius: $progressBarHeight / 2;
+	border-radius: calc($progressBarHeight / 2);
 	height: $progressBarHeight;
 }
 
 .detailCompletion {
 	position: absolute;
 	top: 0;
-	border-radius: $progressBarHeight / 2;
+	border-radius: calc($progressBarHeight / 2);
 	height: $progressBarHeight;
 	min-width: $progressBarHeight;
 }
