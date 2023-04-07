@@ -68,7 +68,7 @@ $sidebarCollapsedWidth: 54px;
 @mixin arrow($direction, $base, $height, $color) {
   border-style: solid;
 
-  $halfbase: calc($base / 2);
+  $halfbase: $base/2;
 
   @if $direction == 'up' {
     border-width: 0 $halfbase $height $halfbase;
